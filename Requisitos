@@ -1,0 +1,3 @@
+- Python 3.8 o superior
+- Tkinter (ya viene con Python)
+- Opcional: Graphviz para visualizar el AFD
