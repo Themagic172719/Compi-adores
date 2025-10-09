@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mini-entorno de compilación LL(1) (versión de entrega).
+
 
 - Lexer (tokenizador) según la gramática y notas:
     * IDs empiezan con letra: [A-Za-z][A-Za-z0-9]*
@@ -11,8 +11,7 @@ Mini-entorno de compilación LL(1) (versión de entrega).
 - Genera tabla de tokens y árbol de derivación (texto).
 - GUI: editar/guardar código, mostrar tokens, errores léxicos, resultado del análisis sintáctico.
 
-Autor: (entrega de proyecto) - adaptar/ajustar según criterios del curso.
-"""
+
 
 import re
 import sys
@@ -925,3 +924,4 @@ fn suma(a:int.b:int) -> int {
 
 if __name__ == "__main__":
     main()
+
