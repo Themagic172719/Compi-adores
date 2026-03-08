@@ -25,23 +25,18 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor, QTextCharFormat, QTextCursor, QFont, QSyntaxHighlighter
 
-# ----------------------------
-# Token structure
-# ----------------------------
+# Token 
 Token = namedtuple("Token", ["type", "lexeme", "line", "col"])
 
-# ----------------------------
 # LEXER
-# ----------------------------
 class LexerError(Exception):
     pass
 
 class Lexer:
     def __init__(self):
-        # Token definitions. Order matters: longer/multi-char tokens first.
         self.token_spec = [
-            ("COMMENT_STRICT", r"//[A-Za-z0-9]+//"),  # strict comment style requested
-            ("COMMENT", r"//[^\n]*"),                 # tolerant comment style
+            ("COMMENT_STRICT", r"//[A-Za-z0-9]+//"),  
+            ("COMMENT", r"//[^\n]*"),                 
             ("NEWLINE", r"\n"),
             ("WHITESPACE", r"[ \t\r]+"),
             ("STRING", r'"([^"\\]|\\.)*"'),
@@ -74,7 +69,6 @@ class Lexer:
             ("RPAREN", r"\)"),
             ("LBRACK", r"\["),
             ("RBRACK", r"\]"),
-            # ID must start with a letter
             ("ID", r"[A-Za-z][A-Za-z0-9]*"),
         ]
 
@@ -135,9 +129,7 @@ class Lexer:
         tokens.append(Token("EOF","<<EOF>>", line, col))
         return tokens
 
-# ----------------------------
-# PARSER (recursive-descent) + Derivation Tree
-# ----------------------------
+# PARSER 
 class ParseError(Exception):
     def __init__(self, message, token, expected=None):
         super().__init__(message)
@@ -537,7 +529,7 @@ class Parser:
             node.children.append(Node(";", token=self.expect("SEMI")))
         return node
 
-    # --- EXPRESSIONS ---
+    # Expresiones
     def Expr(self):
         # Expr → Assign
         node = Node("Expr")
@@ -770,9 +762,6 @@ class Parser:
             node.children.append(Node("ε"))
         return node
 
-# ----------------------------
-# Syntax Highlighter
-# ----------------------------
 class SyntaxHighlighter(QSyntaxHighlighter):
     """
     Resaltador de sintaxis para el editor de código.
@@ -782,9 +771,8 @@ class SyntaxHighlighter(QSyntaxHighlighter):
         super().__init__(parent)
         self.highlighting_rules = []
         
-        # Formato para palabras clave
         keyword_format = QTextCharFormat()
-        keyword_format.setForeground(QColor("#569CD6"))  # Azul para palabras clave
+        keyword_format.setForeground(QColor("#569CD6"))  
         keyword_format.setFontWeight(QFont.Weight.Bold)
         keywords = [
             "module", "import", "as", "type", "struct", "fn", "let", "const", 
@@ -794,9 +782,8 @@ class SyntaxHighlighter(QSyntaxHighlighter):
             pattern = fr'\b{keyword}\b'
             self.highlighting_rules.append((pattern, keyword_format))
         
-        # Formato para operadores
         operator_format = QTextCharFormat()
-        operator_format.setForeground(QColor("#D4D4D4"))  # Gris claro para operadores
+        operator_format.setForeground(QColor("#D4D4D4"))  
         operators = [
             '=', '==', '!=', '<', '<=', '>', '>=', 
             '+', '-', '*', '/', '%', 
@@ -804,24 +791,20 @@ class SyntaxHighlighter(QSyntaxHighlighter):
             '->', ';', ',', '.', '(', ')', '{', '}', '[', ']'
         ]
         for op in operators:
-            # Escapamos los caracteres especiales
             escaped_op = ''.join([f'\\{char}' if char in '()[]{}*.+^$?|' else char for char in op])
             pattern = f'{escaped_op}'
             self.highlighting_rules.append((pattern, operator_format))
         
-        # Formato para literales numéricos
         number_format = QTextCharFormat()
-        number_format.setForeground(QColor("#B5CEA8"))  # Verde para números
+        number_format.setForeground(QColor("#B5CEA8"))  
         self.highlighting_rules.append((r'\b\d+(\.\d+)?([eE][+-]?\d+)?\b', number_format))
         
-        # Formato para literales de cadena
         string_format = QTextCharFormat()
-        string_format.setForeground(QColor("#CE9178"))  # Naranja para cadenas
+        string_format.setForeground(QColor("#CE9178"))  
         self.highlighting_rules.append((r'"[^"]*"', string_format))
         
-        # Formato para comentarios de línea
         comment_format = QTextCharFormat()
-        comment_format.setForeground(QColor("#6A9955"))  # Verde oscuro para comentarios
+        comment_format.setForeground(QColor("#6A9955"))  
         self.highlighting_rules.append((r'//.*', comment_format))
         
     def highlightBlock(self, text):
@@ -835,9 +818,9 @@ class SyntaxHighlighter(QSyntaxHighlighter):
                 length = match.end() - start
                 self.setFormat(start, length, format)
 
-# ----------------------------
-# GUI with PyQt6
-# ----------------------------
+
+# GUI 
+
 class CompilerGUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -856,7 +839,7 @@ class CompilerGUI(QMainWindow):
         splitter = QSplitter(Qt.Orientation.Horizontal)
         main_layout.addWidget(splitter)
         
-        # Panel izquierdo (editor)
+        # Panel izquierdo 
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
         
@@ -1059,9 +1042,8 @@ fn suma(a:int.b:int) -> int {
         self.status_bar.showMessage("Análisis sintáctico exitoso")
         QMessageBox.information(self, "Éxito", "El código pasó el análisis léxico y sintáctico correctamente.")
 
-# ----------------------------
 # Run app
-# ----------------------------
+
 def main():
     app = QApplication(sys.argv)
     window = CompilerGUI()
