@@ -19,14 +19,10 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from collections import namedtuple
 
-# ----------------------------
-# Token structure
-# ----------------------------
+# Token 
 Token = namedtuple("Token", ["type", "lexeme", "line", "col"])
 
-# ----------------------------
 # LEXER
-# ----------------------------
 class LexerError(Exception):
     pass
 
@@ -34,8 +30,8 @@ class Lexer:
     def __init__(self):
         # Token definitions. Order matters: longer/multi-char tokens first.
         self.token_spec = [
-            ("COMMENT_STRICT", r"//[A-Za-z0-9]+//"),  # strict comment style requested
-            ("COMMENT", r"//[^\n]*"),                 # tolerant comment style
+            ("COMMENT_STRICT", r"//[A-Za-z0-9]+//"),  
+            ("COMMENT", r"//[^\n]*"),                
             ("NEWLINE", r"\n"),
             ("WHITESPACE", r"[ \t\r]+"),
             ("STRING", r'"([^"\\]|\\.)*"'),
@@ -68,7 +64,6 @@ class Lexer:
             ("RPAREN", r"\)"),
             ("LBRACK", r"\["),
             ("RBRACK", r"\]"),
-            # ID must start with a letter
             ("ID", r"[A-Za-z][A-Za-z0-9]*"),
         ]
 
@@ -129,9 +124,7 @@ class Lexer:
         tokens.append(Token("EOF","<<EOF>>", line, col))
         return tokens
 
-# ----------------------------
-# PARSER (recursive-descent) + Derivation Tree
-# ----------------------------
+# PARSER
 class ParseError(Exception):
     def __init__(self, message, token, expected=None):
         super().__init__(message)
@@ -764,9 +757,7 @@ class Parser:
             node.children.append(Node("ε"))
         return node
 
-# ----------------------------
 # GUI
-# ----------------------------
 class CompilerGUI:
     def __init__(self, root):
         self.root = root
@@ -898,9 +889,7 @@ class CompilerGUI:
         self.status.config(text="Análisis sintáctico exitoso")
         messagebox.showinfo("Sin errores", "El código pasó el análisis léxico y sintáctico correctamente.")
 
-# ----------------------------
-# Run app
-# ----------------------------
+# Run
 def main():
     root = tk.Tk()
     app = CompilerGUI(root)
@@ -924,4 +913,5 @@ fn suma(a:int.b:int) -> int {
 
 if __name__ == "__main__":
     main()
+
 
